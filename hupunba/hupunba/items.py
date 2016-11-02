@@ -10,12 +10,13 @@ import scrapy
 
 class HupunbaItem(scrapy.Item):
     # define the fields for your item here like:
-    rank = scrapy.Field()
     name = scrapy.Field()
     team = scrapy.Field()
     point = scrapy.Field()
+    assist = scrapy.Field()
+    rebound = scrapy.Field()
     fgs = scrapy.Field()
     threefgs = scrapy.Field()
     freethrowfgs = scrapy.Field()
-    matchnumber = scrapy.Field()
-    time = scrapy.Field()
+    block = scrapy.Field()
+    steal = scrapy.Field()

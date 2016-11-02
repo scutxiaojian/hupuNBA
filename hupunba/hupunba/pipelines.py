@@ -60,19 +60,21 @@ class MySQLStoreHupuPipeline(object):
                 select * from hupunba where name = %s
         """, (item['name']))
         ret = conn.fetchone()
-        for t in item['rank']:
+        for t in item['name']:
             if t != '':
                 if ret:
                     conn.execute("""
-                        update hupunba set rank=%s, name=%s, team=%s, point=%s, fgs=%s, threefgs=%s, freethrowfgs=%s, matchnumber=%s, time=%s where name = %s
-                    """, (item['rank'], item['name'], item['team'], item['point'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['matchnumber'], item['time'], item['name']))
+                        update hupunba set name=%s, team=%s, point=%s, assist=%s, rebound=%s, fgs=%s, threefgs=%s, freethrowfgs=%s, block=%s, steal=%s where name = %s
+                    """, (item['name'], item['team'], item['point'], item['assist'], item['rebound'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['block'], item['steal'], item['name']))
 
                 else:
                     conn.execute("""
-                        insert into hupunba(rank, name, team, point, fgs, threefgs, freethrowfgs, matchnumber, time)
-                        values(%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (item['rank'], item['name'], item['team'], item['point'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['matchnumber'], item['time']))
+                        insert into hupunba(name, team, point, assist, rebound, fgs, threefgs, freethrowfgs, block, steal)
+                        values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (item['name'], item['team'], item['point'], item['assist'], item['rebound'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['block'], item['steal']))
 
 
     def _handle_error(self, failue, item, spider):
         print failue
+
+# select name,point,assist,rebound,block,steal from hupunba;

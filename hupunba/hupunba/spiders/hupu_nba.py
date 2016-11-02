@@ -1,5 +1,6 @@
 import scrapy
 from hupunba.items import HupunbaItem
+from scrapy.http import Request
 
 
 class HupuSpider(scrapy.Spider):
@@ -19,15 +20,21 @@ class HupuSpider(scrapy.Spider):
 
     def parse(self, response):
         for i in range(2,52):
-            item = HupunbaItem()
-            item['rank'] = response.xpath('//tr['+str(i)+']/td[1]/text()').extract()
-            item['name'] = response.xpath('//tr['+str(i)+']/td[2]/a/text()').extract()
-            item['team'] = response.xpath('//tr['+str(i)+']/td[3]/a/text()').extract()
-            item['point'] = response.xpath('//tr['+str(i)+']/td[4]/text()').extract()
-            item['fgs'] = response.xpath('//tr['+str(i)+']/td[6]/text()').extract()
-            item['threefgs'] = response.xpath('//tr['+str(i)+']/td[8]/text()').extract()
-            item['freethrowfgs'] = response.xpath('//tr['+str(i)+']/td[10]/text()').extract()
-            item['matchnumber'] = response.xpath('//tr['+str(i)+']/td[11]/text()').extract()
-            item['time'] = response.xpath('//tr['+str(i)+']/td[12]/text()').extract()
-            yield item
+            urls = response.xpath('//tr['+str(i)+']/td[2]/a/@href').extract()
+            for url in urls:
+                yield Request(url, callback=self.parse2, dont_filter=True)
+
+    def parse2(self, response):
+        item = HupunbaItem()
+        item['name'] = response.xpath('//h2/text()').extract()
+        item['team'] = response.xpath('//div/div[2]/p[5]/a/text()').extract()
+        item['point'] = response.xpath('//div[2]/span[2]/b/text()').extract()
+        item['assist'] = response.xpath('//div[3]/span[2]/b/text()').extract()
+        item['rebound'] = response.xpath('//div[4]/span[2]/b/text()').extract()
+        item['fgs'] = response.xpath('//div[5]/span[2]/b/text()').extract()
+        item['threefgs'] = response.xpath('//div[6]/span[2]/b/text()').extract()
+        item['freethrowfgs'] = response.xpath('//div[7]/span[2]/b/text()').extract()
+        item['block'] = response.xpath('//div[8]/span[2]/b/text()').extract()
+        item['steal'] = response.xpath('//div[9]/span[2]/b/text()').extract()
+        return item
 
