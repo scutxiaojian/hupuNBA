@@ -62,16 +62,18 @@ class MySQLStoreHupuPipeline(object):
         ret = conn.fetchone()
         for t in item['name']:
             if t != '':
-                if ret:
-                    conn.execute("""
-                        update hupunba set name=%s, team=%s, point=%s, assist=%s, rebound=%s, fgs=%s, threefgs=%s, freethrowfgs=%s, block=%s, steal=%s where name = %s
-                    """, (item['name'], item['team'], item['point'], item['assist'], item['rebound'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['block'], item['steal'], item['name']))
+                for i in item['name']:
+                    item['name'] = [i.replace('\n','')]
+                    if ret:
+                        conn.execute("""
+                            update hupunba set name=%s, team=%s, point=%s, assist=%s, rebound=%s, fgs=%s, threefgs=%s, freethrowfgs=%s, block=%s, steal=%s where name = %s
+                        """, (item['name'], item['team'], item['point'], item['assist'], item['rebound'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['block'], item['steal'], item['name']))
 
-                else:
-                    conn.execute("""
-                        insert into hupunba(name, team, point, assist, rebound, fgs, threefgs, freethrowfgs, block, steal)
-                        values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (item['name'], item['team'], item['point'], item['assist'], item['rebound'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['block'], item['steal']))
+                    else:
+                        conn.execute("""
+                            insert into hupunba(name, team, point, assist, rebound, fgs, threefgs, freethrowfgs, block, steal)
+                            values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """, (item['name'], item['team'], item['point'], item['assist'], item['rebound'], item['fgs'], item['threefgs'], item['freethrowfgs'], item['block'], item['steal']))
 
 
     def _handle_error(self, failue, item, spider):
